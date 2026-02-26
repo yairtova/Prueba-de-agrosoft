@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, FlatList, SafeAreaView } from 'react-native';
+import { Sprout, Search, Plus } from 'lucide-react-native';
 import { CropItem } from '../types';
 import CropCard from './CropCard';
 
@@ -70,84 +72,240 @@ const DashboardView: React.FC<DashboardViewProps> = ({ onCreateNew, onSelectCrop
     },
   ];
 
-  return (
-    <div className="flex flex-col h-full animate-in fade-in duration-500 pb-32">
+  const renderHeader = () => (
+    <View>
       {/* Header */}
-      <header className="px-6 pt-10 pb-4 flex items-center gap-4">
-        <div className="w-14 h-14 bg-[#EAF1EE] rounded-full flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-[#4D5D55]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-             <path d="M12 2v8M12 10a4 4 0 0 1 4 4v8M12 10a4 4 0 0 0-4 4v8" />
-             <path d="M12 6a4 4 0 0 0-4-4M12 6a4 4 0 0 1 4-4" />
-          </svg>
-        </div>
-        <h1 className="text-[26px] font-bold tracking-tight text-[#1A1C1B]">Mis cultivos</h1>
-      </header>
+      <View style={styles.header}>
+        <View style={styles.headerIconWrapper}>
+          <Sprout color="#4D5D55" size={28} />
+        </View>
+        <Text style={styles.headerTitle}>Mis cultivos</Text>
+      </View>
 
       {/* Search Bar */}
-      <div className="px-6 mb-6 mt-2">
-        <div className="relative">
-          <input
-            type="text"
+      <View style={styles.searchContainer}>
+        <View style={styles.searchWrapper}>
+          <TextInput
             placeholder="Buscar cultivo"
-            className="w-full bg-white py-4 pl-6 pr-12 rounded-[1.2rem] shadow-sm text-[16px] border-none focus:ring-1 focus:ring-[#8BB29E] placeholder-[#9CA3AF]"
+            placeholderTextColor="#9CA3AF"
+            style={styles.searchInput}
           />
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute right-5 top-1/2 -translate-y-1/2 text-[#1A1C1B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-      </div>
+          <Search color="#1A1C1B" size={20} style={styles.searchIcon} />
+        </View>
+      </View>
 
       {/* Filters */}
-      <div className="px-6 mb-8 flex gap-3 overflow-x-auto no-scrollbar">
-        {['Todos', 'Activos', 'Hechos', ''].map((f, i) => (
-          f === '' ? (
-             <div key={i} className="bg-[#E5E7EB] w-14 h-11 rounded-[1rem] opacity-40 shrink-0"></div>
-          ) : (
-            <button
-              key={i}
-              onClick={() => setFilter(f)}
-              className={`px-7 py-2.5 rounded-[1rem] font-bold text-[15px] transition-all whitespace-nowrap ${
-                filter === f 
-                  ? 'bg-[#1A1C1B] text-white' 
-                  : 'bg-[#DDE4E1] text-[#4D5D55]'
-              }`}
-            >
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false} 
+        style={styles.filtersScroll}
+        contentContainerStyle={styles.filtersContent}
+      >
+        {['Todos', 'Activos', 'Hechos'].map((f, i) => (
+          <TouchableOpacity
+            key={i}
+            onPress={() => setFilter(f)}
+            style={[
+              styles.filterBtn,
+              filter === f ? styles.filterBtnActive : styles.filterBtnInactive
+            ]}
+          >
+            <Text style={[
+              styles.filterText,
+              filter === f ? styles.filterTextActive : styles.filterTextInactive
+            ]}>
               {f}
-            </button>
-          )
+            </Text>
+          </TouchableOpacity>
         ))}
-      </div>
+        <View style={styles.filterPlaceholder} />
+      </ScrollView>
 
       {/* Summary Card */}
-      <div className="px-6 mb-8">
-        <div className="bg-[#E2EAE6] p-7 rounded-[2rem] flex items-center gap-6">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-[32px] font-extrabold shadow-sm text-[#1A1C1B]">
-            9
-          </div>
-          <span className="text-[22px] font-bold tracking-tight text-[#1A1C1B]">Cultivos en total</span>
-        </div>
-      </div>
+      <View style={styles.summaryCard}>
+        <View style={styles.summaryBadge}>
+          <Text style={styles.summaryCount}>9</Text>
+        </View>
+        <Text style={styles.summaryText}>Cultivos en total</Text>
+      </View>
+    </View>
+  );
 
-      {/* Grid */}
-      <main className="px-6 flex-grow overflow-y-auto pb-10">
-        <div className="grid grid-cols-2 gap-5">
-          {crops.map((crop) => (
-            <CropCard key={crop.id} crop={crop} onClick={() => onSelectCrop(crop)} />
-          ))}
-        </div>
-      </main>
+  return (
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={crops}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.cardWrapper}>
+            <CropCard crop={item} onClick={() => onSelectCrop(item)} />
+          </View>
+        )}
+        numColumns={2}
+        ListHeaderComponent={renderHeader}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+      />
 
-      {/* FAB (Floating Action Button) */}
-      <button 
-        onClick={onCreateNew}
-        className="fixed bottom-28 right-8 w-[72px] h-[72px] bg-[#1A1C1B] text-white rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.2)] active:scale-90 transition-transform z-40"
+      {/* FAB */}
+      <TouchableOpacity 
+        activeOpacity={0.8}
+        onPress={onCreateNew}
+        style={styles.fab}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 6v12m6-6H6" />
-        </svg>
-      </button>
-    </div>
+        <Plus color="white" size={40} />
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7F6',
+  },
+  listContent: {
+    paddingBottom: 120,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    paddingBottom: 16,
+  },
+  headerIconWrapper: {
+    width: 56,
+    height: 56,
+    backgroundColor: '#EAF1EE',
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  headerTitle: {
+    fontSize: 26,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  searchContainer: {
+    paddingHorizontal: 24,
+    marginBottom: 24,
+    marginTop: 8,
+  },
+  searchWrapper: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    height: 56,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#1A1C1B',
+    padding: 0,
+  },
+  searchIcon: {
+    marginLeft: 12,
+  },
+  filtersScroll: {
+    marginBottom: 32,
+  },
+  filtersContent: {
+    paddingHorizontal: 24,
+    gap: 12,
+  },
+  filterBtn: {
+    paddingHorizontal: 28,
+    paddingVertical: 10,
+    borderRadius: 16,
+  },
+  filterBtnActive: {
+    backgroundColor: '#1A1C1B',
+  },
+  filterBtnInactive: {
+    backgroundColor: '#DDE4E1',
+  },
+  filterText: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  filterTextActive: {
+    color: 'white',
+  },
+  filterTextInactive: {
+    color: '#4D5D55',
+  },
+  filterPlaceholder: {
+    width: 56,
+    height: 44,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 16,
+    opacity: 0.4,
+  },
+  summaryCard: {
+    backgroundColor: '#E2EAE6',
+    marginHorizontal: 24,
+    padding: 28,
+    borderRadius: 32,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  summaryBadge: {
+    width: 64,
+    height: 64,
+    backgroundColor: 'white',
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    marginRight: 24,
+  },
+  summaryCount: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  summaryText: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  cardWrapper: {
+    flex: 1,
+    padding: 10,
+    maxWidth: '50%',
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 32,
+    right: 32,
+    width: 72,
+    height: 72,
+    backgroundColor: '#1A1C1B',
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    zIndex: 40,
+  },
+});
 
 export default DashboardView;

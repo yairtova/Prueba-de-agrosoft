@@ -1,20 +1,37 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# AgroCultivo IA - Guía de Ejecución Local
 
-# Run and deploy your AI Studio app
+Esta aplicación está construida con **React**, **TypeScript** y **Vite**. Sigue estos pasos para ejecutarla en tu computadora:
 
-This contains everything you need to run your app locally.
+## 1. Requisitos Previos
+Asegúrate de tener instalado **Node.js** (versión 18 o superior). Puedes descargarlo en [nodejs.org](https://nodejs.org/).
 
-View your app in AI Studio: https://ai.studio/apps/3496b706-35b1-4d81-b005-fbdbf672f569
+## 2. Instalación
+Una vez que descargues y extraigas los archivos del proyecto, abre una terminal (CMD, PowerShell o Terminal de VS Code) en la carpeta raíz del proyecto y ejecuta:
 
-## Run Locally
+```bash
+npm install
+```
 
-**Prerequisites:**  Node.js
+Esto descargará todas las librerías necesarias (React, Tailwind, Framer Motion, Lucide, etc.).
 
+## 3. Ejecución en Desarrollo
+Para iniciar la aplicación en modo de desarrollo, ejecuta:
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```bash
+npm run dev
+```
+
+La terminal te mostrará una dirección (usualmente `http://localhost:3000` o `http://localhost:5173`). Abre ese enlace en tu navegador.
+
+## 4. Comandos Útiles
+*   `npm run build`: Genera los archivos listos para producción en la carpeta `dist/`.
+*   `npm run lint`: Verifica que no haya errores de código o de tipos (TypeScript).
+
+## 5. Estructura del Proyecto
+*   `/src/components`: Contiene todas las vistas y elementos visuales.
+*   `/src/App.tsx`: Es el corazón de la aplicación donde se maneja la navegación.
+*   `/src/types.ts`: Definiciones de datos basadas en tu esquema SQL.
+*   `/src/index.css`: Configuraciones de estilos y Tailwind CSS.
+
+---
+**Nota:** Para ver la aplicación como si fuera un celular en tu navegador, presiona `F12`, y haz clic en el icono de "Dispositivos móviles" (Toggle device toolbar).

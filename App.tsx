@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { AnimatePresence } from 'motion/react';
+import { View as RNView, StyleSheet, SafeAreaView, StatusBar, Platform, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashView from './components/SplashView';
 import LoginView from './components/LoginView';
 import RegisterView from './components/RegisterView';
@@ -84,30 +85,28 @@ const App: React.FC = () => {
     setCurrentView('report-success');
   };
 
-  return (
-    <div className="flex flex-col min-h-screen bg-[#F5F7F6] font-sans text-[#1A1C1B] max-w-md mx-auto shadow-2xl overflow-hidden relative border-x border-gray-200">
-      <AnimatePresence mode="wait">
-        {currentView === 'splash' && (
-          <SplashView key="splash" onContinue={() => setCurrentView('login')} />
-        )}
-
-        {currentView === 'login' && (
+  const renderView = () => {
+    switch (currentView) {
+      case 'splash':
+        return <SplashView key="splash" onContinue={() => setCurrentView('login')} />;
+      case 'login':
+        return (
           <LoginView 
             key="login" 
             onLogin={() => setCurrentView('home')} 
             onGoToRegister={() => setCurrentView('register')}
           />
-        )}
-
-        {currentView === 'register' && (
+        );
+      case 'register':
+        return (
           <RegisterView 
             key="register" 
             onRegister={() => setCurrentView('home')} 
             onGoToLogin={() => setCurrentView('login')}
           />
-        )}
-
-        {currentView === 'home' && (
+        );
+      case 'home':
+        return (
           <HomeView 
             key="home"
             activeCropsCount={3}
@@ -117,17 +116,17 @@ const App: React.FC = () => {
             onViewAllCrops={() => setCurrentView('dashboard')}
             onViewHistory={() => setCurrentView('history')}
           />
-        )}
-
-        {currentView === 'dashboard' && (
+        );
+      case 'dashboard':
+        return (
           <DashboardView 
             key="dashboard"
             onCreateNew={() => setCurrentView('create')} 
             onSelectCrop={handleSelectCrop}
           />
-        )}
-        
-        {currentView === 'create' && (
+        );
+      case 'create':
+        return (
           <CreateCropView 
             key="create"
             onBack={() => setCurrentView('home')} 
@@ -136,9 +135,9 @@ const App: React.FC = () => {
               setCurrentView('dashboard');
             }}
           />
-        )}
-
-        {currentView === 'detail' && selectedCrop && (
+        );
+      case 'detail':
+        return selectedCrop ? (
           <CropDetail 
             key="detail"
             crop={selectedCrop} 
@@ -148,17 +147,17 @@ const App: React.FC = () => {
             onAIAnalysis={() => setCurrentView('ai-analysis')}
             onAIAlerts={() => setCurrentView('ai-alerts')}
           />
-        )}
-
-        {currentView === 'report-select' && (
+        ) : null;
+      case 'report-select':
+        return (
           <ReportSelectView 
             key="report-select"
             onBack={() => setCurrentView('detail')}
             onSelectType={handleSelectReportType}
           />
-        )}
-
-        {currentView === 'report-form' && selectedReportType && selectedCrop && (
+        );
+      case 'report-form':
+        return selectedReportType && selectedCrop ? (
           <ReportFormView 
             key="report-form"
             type={selectedReportType}
@@ -166,25 +165,25 @@ const App: React.FC = () => {
             onBack={() => setCurrentView('report-select')}
             onSubmit={handleReportSubmit}
           />
-        )}
-
-        {currentView === 'report-success' && (
+        ) : null;
+      case 'report-success':
+        return (
           <ReportSuccessView 
             key="report-success"
             onAccept={() => setCurrentView('detail')}
             onViewReport={() => setCurrentView('report-detail')}
           />
-        )}
-
-        {currentView === 'report-detail' && selectedEvent && (
+        );
+      case 'report-detail':
+        return selectedEvent ? (
           <ReportDetailView 
             key="report-detail"
             event={selectedEvent}
             onBack={() => setCurrentView('history')}
           />
-        )}
-
-        {currentView === 'history' && (
+        ) : null;
+      case 'history':
+        return (
           <HistoryView 
             key="history"
             onBack={() => setCurrentView('detail')}
@@ -193,33 +192,87 @@ const App: React.FC = () => {
               setCurrentView('report-detail');
             }}
           />
-        )}
-
-        {currentView === 'ai-analysis' && (
+        );
+      case 'ai-analysis':
+        return (
           <AIAnalysisView 
             key="ai-analysis"
             onBack={() => setCurrentView('detail')}
           />
-        )}
-
-        {currentView === 'ai-alerts' && (
+        );
+      case 'ai-alerts':
+        return (
           <AIAlertsView 
             key="ai-alerts"
             onBack={() => setCurrentView('detail')}
           />
-        )}
+        );
+      case 'profile':
+        return (
+          <RNView style={styles.profileContainer}>
+            <Text style={styles.profileTitle}>Perfil del Usuario</Text>
+            <TouchableOpacity 
+              onPress={() => setCurrentView('login')} 
+              style={styles.logoutBtn}
+            >
+              <Text style={styles.logoutBtnText}>Cerrar sesión</Text>
+            </TouchableOpacity>
+          </RNView>
+        );
+      default:
+        return null;
+    }
+  };
 
-        {currentView === 'profile' && (
-          <div key="profile" className="flex flex-col items-center justify-center h-full">
-            <h1 className="text-2xl font-black">Perfil del Usuario</h1>
-            <button onClick={() => setCurrentView('login')} className="mt-4 bg-red-500 text-white px-6 py-2 rounded-xl font-bold">Cerrar sesión</button>
-          </div>
-        )}
-      </AnimatePresence>
-      
-      <BottomNav currentView={currentView} onChangeView={setCurrentView} />
-    </div>
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" />
+        <RNView style={styles.viewContainer}>
+          {renderView()}
+        </RNView>
+        <BottomNav currentView={currentView} onChangeView={setCurrentView} />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7F6',
+  },
+  viewContainer: {
+    flex: 1,
+  },
+  profileContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  profileTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#1A1C1B',
+    marginBottom: 24,
+  },
+  logoutBtn: {
+    backgroundColor: '#EF4444',
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  logoutBtnText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+});
 
 export default App;

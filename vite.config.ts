@@ -17,7 +17,19 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
-        }
+          'react-native/Libraries/Utilities/codegenNativeComponent': path.resolve(__dirname, './codegenMock.js'),
+          'react-native': 'react-native-web',
+        },
+        extensions: [
+          '.web.tsx',
+          '.web.ts',
+          '.web.jsx',
+          '.web.js',
+          '.tsx',
+          '.ts',
+          '.jsx',
+          '.js',
+        ],
       }
     };
 });

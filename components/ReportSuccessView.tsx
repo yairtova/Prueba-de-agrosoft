@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { Check } from 'lucide-react-native';
 
 interface ReportSuccessViewProps {
   onAccept: () => void;
@@ -9,40 +10,104 @@ interface ReportSuccessViewProps {
 
 const ReportSuccessView: React.FC<ReportSuccessViewProps> = ({ onAccept, onViewReport }) => {
   return (
-    <div className="flex flex-col h-full bg-[#F5F7F6] px-6 py-12">
-      <div className="flex-grow flex flex-col items-center justify-center text-center">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', damping: 12 }}
-          className="w-32 h-32 bg-[#4D5D55] rounded-full flex items-center justify-center text-white mb-8 shadow-xl"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-          </svg>
-        </motion.div>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <View style={styles.successIconWrapper}>
+          <Check color="white" size={80} strokeWidth={3} />
+        </View>
 
-        <h1 className="text-[32px] font-black text-[#1A1C1B] mb-12 leading-tight">
+        <Text style={styles.title}>
           Reporte realizado con exito
-        </h1>
+        </Text>
 
-        <div className="flex gap-4 w-full">
-          <button 
-            onClick={onAccept}
-            className="flex-1 bg-[#1A1C1B] text-white py-5 rounded-2xl text-[18px] font-black shadow-lg active:scale-95 transition-transform"
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            onPress={onAccept}
+            style={styles.acceptBtn}
           >
-            Aceptar
-          </button>
-          <button 
-            onClick={onViewReport}
-            className="flex-1 bg-[#DDE4E1] text-[#1A1C1B] py-5 rounded-2xl text-[18px] font-black shadow-sm active:scale-95 transition-transform"
+            <Text style={styles.acceptBtnText}>Aceptar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={onViewReport}
+            style={styles.viewReportBtn}
           >
-            Ver reporte
-          </button>
-        </div>
-      </div>
-    </div>
+            <Text style={styles.viewReportBtnText}>Ver reporte</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7F6',
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  successIconWrapper: {
+    width: 128,
+    height: 128,
+    backgroundColor: '#4D5D55',
+    borderRadius: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 32,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#1A1C1B',
+    textAlign: 'center',
+    marginBottom: 48,
+    lineHeight: 40,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 16,
+    width: '100%',
+  },
+  acceptBtn: {
+    flex: 1,
+    backgroundColor: '#1A1C1B',
+    paddingVertical: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  acceptBtnText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  viewReportBtn: {
+    flex: 1,
+    backgroundColor: '#DDE4E1',
+    paddingVertical: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  viewReportBtnText: {
+    color: '#1A1C1B',
+    fontSize: 18,
+    fontWeight: '900',
+  },
+});
 
 export default ReportSuccessView;

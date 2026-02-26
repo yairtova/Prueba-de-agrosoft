@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, SafeAreaView } from 'react-native';
+import { ChevronLeft, Calendar, Plus, ChevronRight } from 'lucide-react-native';
 import { EventType, CropItem } from '../types';
 
 interface ReportFormViewProps {
@@ -12,23 +13,16 @@ interface ReportFormViewProps {
 
 const ReportFormView: React.FC<ReportFormViewProps> = ({ type, crop, onBack, onSubmit }) => {
   const [formData, setFormData] = useState<any>({
-    // Common fields
     date: new Date().toISOString().split('T')[0],
-    
-    // Riego
     cantidad_agua: '',
     metodo_riego: 'goteo',
     duracion_minutos: '',
-
-    // Fertilizacion
     tipo_fertilizante: 'organico',
     nombre_fertilizante: '',
     cantidad_aplicada: '',
     unidad_medida: 'kg',
     metodo_aplicacion: 'edafico',
     costo: '',
-
-    // Fumigacion
     nombre_producto: '',
     tipo_producto: 'insecticida',
     ingrediente_activo: '',
@@ -36,21 +30,15 @@ const ReportFormView: React.FC<ReportFormViewProps> = ({ type, crop, onBack, onS
     total_mezcla_litros: '',
     plaga_objetivo: '',
     periodo_seguridad_dias: '',
-
-    // Poda
     tipo_poda: 'mantenimiento',
     partes_podadas: '',
     porcentaje_podado: '',
     herramientas_utilizadas: '',
     estado_planta_despues: '',
-
-    // Crecimiento
     altura_planta: '',
     grosor_tallo: '',
     diametro: '',
     estado_salud: 'buena',
-
-    // Plaga/Irregularidad
     tipo_irregularidad: 'plaga',
     nombre_plaga: '',
     nivel_dano: 'bajo',
@@ -75,176 +63,254 @@ const ReportFormView: React.FC<ReportFormViewProps> = ({ type, crop, onBack, onS
     switch (type) {
       case 'riego':
         return (
-          <>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Cantidad de agua (Litros)</label>
-              <input type="number" value={formData.cantidad_agua} onChange={(e) => handleChange('cantidad_agua', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: 50" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Método de riego</label>
-              <select value={formData.metodo_riego} onChange={(e) => handleChange('metodo_riego', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                <option value="goteo">Goteo</option>
-                <option value="aspersion">Aspersión</option>
-                <option value="manual">Manual</option>
-                <option value="inundacion">Inundación</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Duración (Minutos)</label>
-              <input type="number" value={formData.duracion_minutos} onChange={(e) => handleChange('duracion_minutos', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: 30" />
-            </div>
-          </>
+          <View style={styles.fieldsContainer}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Cantidad de agua (Litros)</Text>
+              <TextInput 
+                keyboardType="numeric"
+                value={formData.cantidad_agua} 
+                onChangeText={(val) => handleChange('cantidad_agua', val)} 
+                style={styles.textInput} 
+                placeholder="Ej: 50" 
+                placeholderTextColor="#9CA3AF"
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Método de riego</Text>
+              <View style={styles.pickerContainer}>
+                {['goteo', 'aspersion', 'manual', 'inundacion'].map((opt) => (
+                  <TouchableOpacity 
+                    key={opt}
+                    onPress={() => handleChange('metodo_riego', opt)}
+                    style={[styles.pickerOption, formData.metodo_riego === opt && styles.pickerOptionSelected]}
+                  >
+                    <Text style={[styles.pickerOptionText, formData.metodo_riego === opt && styles.pickerOptionTextSelected]}>
+                      {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Duración (Minutos)</Text>
+              <TextInput 
+                keyboardType="numeric"
+                value={formData.duracion_minutos} 
+                onChangeText={(val) => handleChange('duracion_minutos', val)} 
+                style={styles.textInput} 
+                placeholder="Ej: 30" 
+                placeholderTextColor="#9CA3AF"
+              />
+            </View>
+          </View>
         );
       case 'fertilizacion':
         return (
-          <>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Tipo de fertilizante</label>
-              <select value={formData.tipo_fertilizante} onChange={(e) => handleChange('tipo_fertilizante', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                <option value="organico">Orgánico</option>
-                <option value="quimico">Químico</option>
-                <option value="foliar">Foliar</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Nombre del fertilizante</label>
-              <input type="text" value={formData.nombre_fertilizante} onChange={(e) => handleChange('nombre_fertilizante', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: Urea" />
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-1 space-y-2">
-                <label className="text-[16px] font-black text-[#1A1C1B]">Cantidad</label>
-                <input type="number" value={formData.cantidad_aplicada} onChange={(e) => handleChange('cantidad_aplicada', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: 5" />
-              </div>
-              <div className="w-24 space-y-2">
-                <label className="text-[16px] font-black text-[#1A1C1B]">Unidad</label>
-                <select value={formData.unidad_medida} onChange={(e) => handleChange('unidad_medida', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                  <option value="kg">Kg</option>
-                  <option value="l">L</option>
-                  <option value="g">g</option>
-                </select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Método de aplicación</label>
-              <select value={formData.metodo_aplicacion} onChange={(e) => handleChange('metodo_aplicacion', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                <option value="edafico">Edáfico</option>
-                <option value="foliar">Foliar</option>
-                <option value="fertirriego">Fertirriego</option>
-              </select>
-            </div>
-          </>
+          <View style={styles.fieldsContainer}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Tipo de fertilizante</Text>
+              <View style={styles.pickerContainer}>
+                {['organico', 'quimico', 'foliar'].map((opt) => (
+                  <TouchableOpacity 
+                    key={opt}
+                    onPress={() => handleChange('tipo_fertilizante', opt)}
+                    style={[styles.pickerOption, formData.tipo_fertilizante === opt && styles.pickerOptionSelected]}
+                  >
+                    <Text style={[styles.pickerOptionText, formData.tipo_fertilizante === opt && styles.pickerOptionTextSelected]}>
+                      {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Nombre del fertilizante</Text>
+              <TextInput 
+                value={formData.nombre_fertilizante} 
+                onChangeText={(val) => handleChange('nombre_fertilizante', val)} 
+                style={styles.textInput} 
+                placeholder="Ej: Urea" 
+                placeholderTextColor="#9CA3AF"
+              />
+            </View>
+            <View style={styles.row}>
+              <View style={[styles.inputGroup, { flex: 1 }]}>
+                <Text style={styles.label}>Cantidad</Text>
+                <TextInput 
+                  keyboardType="numeric"
+                  value={formData.cantidad_aplicada} 
+                  onChangeText={(val) => handleChange('cantidad_aplicada', val)} 
+                  style={styles.textInput} 
+                  placeholder="Ej: 5" 
+                  placeholderTextColor="#9CA3AF"
+                />
+              </View>
+              <View style={[styles.inputGroup, { width: 100 }]}>
+                <Text style={styles.label}>Unidad</Text>
+                <View style={styles.pickerContainer}>
+                  {['kg', 'l', 'g'].map((opt) => (
+                    <TouchableOpacity 
+                      key={opt}
+                      onPress={() => handleChange('unidad_medida', opt)}
+                      style={[styles.pickerOption, formData.unidad_medida === opt && styles.pickerOptionSelected, { paddingHorizontal: 8 }]}
+                    >
+                      <Text style={[styles.pickerOptionText, formData.unidad_medida === opt && styles.pickerOptionTextSelected]}>
+                        {opt}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </View>
+          </View>
         );
       case 'fumigacion':
         return (
-          <>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Nombre del producto</label>
-              <input type="text" value={formData.nombre_producto} onChange={(e) => handleChange('nombre_producto', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: Abamectina" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Tipo de producto</label>
-              <select value={formData.tipo_producto} onChange={(e) => handleChange('tipo_producto', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                <option value="insecticida">Insecticida</option>
-                <option value="fungicida">Fungicida</option>
-                <option value="herbicida">Herbicida</option>
-                <option value="acaricida">Acaricida</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Plaga objetivo</label>
-              <input type="text" value={formData.plaga_objetivo} onChange={(e) => handleChange('plaga_objetivo', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: Pulgón" />
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-1 space-y-2">
-                <label className="text-[16px] font-black text-[#1A1C1B]">Dosis</label>
-                <input type="text" value={formData.dosis} onChange={(e) => handleChange('dosis', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: 2ml/L" />
-              </div>
-              <div className="flex-1 space-y-2">
-                <label className="text-[16px] font-black text-[#1A1C1B]">Total mezcla (L)</label>
-                <input type="number" value={formData.total_mezcla_litros} onChange={(e) => handleChange('total_mezcla_litros', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: 20" />
-              </div>
-            </div>
-          </>
+          <View style={styles.fieldsContainer}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Nombre del producto</Text>
+              <TextInput 
+                value={formData.nombre_producto} 
+                onChangeText={(val) => handleChange('nombre_producto', val)} 
+                style={styles.textInput} 
+                placeholder="Ej: Abamectina" 
+                placeholderTextColor="#9CA3AF"
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Tipo de producto</Text>
+              <View style={styles.pickerContainer}>
+                {['insecticida', 'fungicida', 'herbicida', 'acaricida'].map((opt) => (
+                  <TouchableOpacity 
+                    key={opt}
+                    onPress={() => handleChange('tipo_producto', opt)}
+                    style={[styles.pickerOption, formData.tipo_producto === opt && styles.pickerOptionSelected]}
+                  >
+                    <Text style={[styles.pickerOptionText, formData.tipo_producto === opt && styles.pickerOptionTextSelected]}>
+                      {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Plaga objetivo</Text>
+              <TextInput 
+                value={formData.plaga_objetivo} 
+                onChangeText={(val) => handleChange('plaga_objetivo', val)} 
+                style={styles.textInput} 
+                placeholder="Ej: Pulgón" 
+                placeholderTextColor="#9CA3AF"
+              />
+            </View>
+          </View>
         );
       case 'poda':
         return (
-          <>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Tipo de poda</label>
-              <select value={formData.tipo_poda} onChange={(e) => handleChange('tipo_poda', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                <option value="formacion">Formación</option>
-                <option value="mantenimiento">Mantenimiento</option>
-                <option value="sanitaria">Sanitaria</option>
-                <option value="rejuvenecimiento">Rejuvenecimiento</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Partes podadas</label>
-              <input type="text" value={formData.partes_podadas} onChange={(e) => handleChange('partes_podadas', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: Hojas basales" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Porcentaje podado (%)</label>
-              <input type="number" value={formData.porcentaje_podado} onChange={(e) => handleChange('porcentaje_podado', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: 10" />
-            </div>
-          </>
+          <View style={styles.fieldsContainer}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Tipo de poda</Text>
+              <View style={styles.pickerContainer}>
+                {['formacion', 'mantenimiento', 'sanitaria'].map((opt) => (
+                  <TouchableOpacity 
+                    key={opt}
+                    onPress={() => handleChange('tipo_poda', opt)}
+                    style={[styles.pickerOption, formData.tipo_poda === opt && styles.pickerOptionSelected]}
+                  >
+                    <Text style={[styles.pickerOptionText, formData.tipo_poda === opt && styles.pickerOptionTextSelected]}>
+                      {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Partes podadas</Text>
+              <TextInput 
+                value={formData.partes_podadas} 
+                onChangeText={(val) => handleChange('partes_podadas', val)} 
+                style={styles.textInput} 
+                placeholder="Ej: Hojas basales" 
+                placeholderTextColor="#9CA3AF"
+              />
+            </View>
+          </View>
         );
       case 'crecimiento':
         return (
-          <>
-            <div className="flex gap-4">
-              <div className="flex-1 space-y-2">
-                <label className="text-[16px] font-black text-[#1A1C1B]">Altura (cm)</label>
-                <input type="number" value={formData.altura_planta} onChange={(e) => handleChange('altura_planta', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: 15" />
-              </div>
-              <div className="flex-1 space-y-2">
-                <label className="text-[16px] font-black text-[#1A1C1B]">Grosor tallo (mm)</label>
-                <input type="number" value={formData.grosor_tallo} onChange={(e) => handleChange('grosor_tallo', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: 5" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Estado de salud</label>
-              <select value={formData.estado_salud} onChange={(e) => handleChange('estado_salud', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                <option value="buena">Buena</option>
-                <option value="regular">Regular</option>
-                <option value="mala">Mala</option>
-              </select>
-            </div>
-          </>
+          <View style={styles.fieldsContainer}>
+            <View style={styles.row}>
+              <View style={[styles.inputGroup, { flex: 1 }]}>
+                <Text style={styles.label}>Altura (cm)</Text>
+                <TextInput 
+                  keyboardType="numeric"
+                  value={formData.altura_planta} 
+                  onChangeText={(val) => handleChange('altura_planta', val)} 
+                  style={styles.textInput} 
+                  placeholder="Ej: 15" 
+                  placeholderTextColor="#9CA3AF"
+                />
+              </View>
+              <View style={[styles.inputGroup, { flex: 1 }]}>
+                <Text style={styles.label}>Grosor tallo (mm)</Text>
+                <TextInput 
+                  keyboardType="numeric"
+                  value={formData.grosor_tallo} 
+                  onChangeText={(val) => handleChange('grosor_tallo', val)} 
+                  style={styles.textInput} 
+                  placeholder="Ej: 5" 
+                  placeholderTextColor="#9CA3AF"
+                />
+              </View>
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Estado de salud</Text>
+              <View style={styles.pickerContainer}>
+                {['buena', 'regular', 'mala'].map((opt) => (
+                  <TouchableOpacity 
+                    key={opt}
+                    onPress={() => handleChange('estado_salud', opt)}
+                    style={[styles.pickerOption, formData.estado_salud === opt && styles.pickerOptionSelected]}
+                  >
+                    <Text style={[styles.pickerOptionText, formData.estado_salud === opt && styles.pickerOptionTextSelected]}>
+                      {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </View>
         );
       case 'plaga':
         return (
-          <>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Tipo de irregularidad</label>
-              <select value={formData.tipo_irregularidad} onChange={(e) => handleChange('tipo_irregularidad', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                <option value="plaga">Plaga</option>
-                <option value="enfermedad">Enfermedad</option>
-                <option value="deficiencia">Deficiencia nutricional</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Nombre (Plaga/Enfermedad)</label>
-              <input type="text" value={formData.nombre_plaga} onChange={(e) => handleChange('nombre_plaga', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]" placeholder="Ej: Araña roja" />
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-1 space-y-2">
-                <label className="text-[16px] font-black text-[#1A1C1B]">Nivel daño</label>
-                <select value={formData.nivel_dano} onChange={(e) => handleChange('nivel_dano', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                  <option value="bajo">Bajo</option>
-                  <option value="medio">Medio</option>
-                  <option value="alto">Alto</option>
-                </select>
-              </div>
-              <div className="flex-1 space-y-2">
-                <label className="text-[16px] font-black text-[#1A1C1B]">Severidad</label>
-                <select value={formData.severidad} onChange={(e) => handleChange('severidad', e.target.value)} className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]">
-                  <option value="leve">Leve</option>
-                  <option value="moderada">Moderada</option>
-                  <option value="critica">Crítica</option>
-                </select>
-              </div>
-            </div>
-          </>
+          <View style={styles.fieldsContainer}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Tipo de irregularidad</Text>
+              <View style={styles.pickerContainer}>
+                {['plaga', 'enfermedad', 'deficiencia'].map((opt) => (
+                  <TouchableOpacity 
+                    key={opt}
+                    onPress={() => handleChange('tipo_irregularidad', opt)}
+                    style={[styles.pickerOption, formData.tipo_irregularidad === opt && styles.pickerOptionSelected]}
+                  >
+                    <Text style={[styles.pickerOptionText, formData.tipo_irregularidad === opt && styles.pickerOptionTextSelected]}>
+                      {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Nombre (Plaga/Enfermedad)</Text>
+              <TextInput 
+                value={formData.nombre_plaga} 
+                onChangeText={(val) => handleChange('nombre_plaga', val)} 
+                style={styles.textInput} 
+                placeholder="Ej: Araña roja" 
+                placeholderTextColor="#9CA3AF"
+              />
+            </View>
+          </View>
         );
       default:
         return null;
@@ -252,99 +318,316 @@ const ReportFormView: React.FC<ReportFormViewProps> = ({ type, crop, onBack, onS
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#F5F7F6] overflow-y-auto no-scrollbar pb-32">
-      <header className="px-6 pt-10 pb-4 flex items-center gap-5">
-        <button onClick={onBack} className="w-12 h-12 bg-[#1A1C1B] rounded-full flex items-center justify-center text-white shadow-md active:scale-90 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <h1 className="text-[22px] font-bold tracking-tight">{titles[type]}</h1>
-      </header>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+          <ChevronLeft color="white" size={24} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{titles[type]}</Text>
+      </View>
 
-      <div className="px-6 mb-6">
-        <div className="flex items-center gap-4 mb-2">
-          <span className="text-[15px] font-bold text-[#1A1C1B]">Paso 2 de 2</span>
-          <div className="flex-grow h-1.5 bg-gray-200 rounded-full overflow-hidden">
-            <div className="w-full h-full bg-[#8BB29E] rounded-full"></div>
-          </div>
-        </div>
-      </div>
+      <View style={styles.stepInfo}>
+        <View style={styles.stepTextWrapper}>
+          <Text style={styles.stepText}>Paso 2 de 2</Text>
+          <View style={styles.progressBarWrapper}>
+            <View style={styles.progressBar} />
+          </View>
+        </View>
+      </View>
 
-      <main className="px-6 space-y-6">
-        <div className="bg-white rounded-[2.5rem] p-8 shadow-sm space-y-6">
-          <h2 className="text-[28px] font-black text-center text-[#1A1C1B] mb-4">{crop.name}</h2>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.card}>
+          <Text style={styles.cropName}>{crop.name}</Text>
 
-          <div className="space-y-4">
-            <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-              <span className="text-[16px] font-black text-[#1A1C1B]">Variedad</span>
-              <span className="text-[16px] font-bold text-[#4D5D55]">{crop.variety}</span>
-            </div>
-            <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-              <span className="text-[16px] font-black text-[#1A1C1B]">Tipo</span>
-              <span className="text-[16px] font-bold text-[#4D5D55]">{crop.type}</span>
-            </div>
-          </div>
+          <View style={styles.summarySection}>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Variedad</Text>
+              <Text style={styles.summaryValue}>{crop.variety}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Tipo</Text>
+              <Text style={styles.summaryValue}>{crop.type}</Text>
+            </View>
+          </View>
 
-          <div className="space-y-6 pt-4">
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Fecha del reporte</label>
-              <div className="relative">
-                <input 
-                  type="date" 
+          <View style={styles.formSection}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Fecha del reporte</Text>
+              <View style={styles.dateInputWrapper}>
+                <TextInput 
                   value={formData.date}
-                  onChange={(e) => handleChange('date', e.target.value)}
-                  className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55]"
+                  onChangeText={(val) => handleChange('date', val)}
+                  style={styles.textInput}
                 />
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 absolute right-6 top-1/2 -translate-y-1/2 text-[#4D5D55]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </div>
+                <Calendar color="#4D5D55" size={24} style={styles.calendarIcon} />
+              </View>
+            </View>
 
             {renderFields()}
 
-            <div className="space-y-2">
-              <label className="text-[16px] font-black text-[#1A1C1B]">Notas adicionales</label>
-              <textarea 
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Notas adicionales</Text>
+              <TextInput 
+                multiline
+                numberOfLines={4}
                 value={formData.descripcion}
-                onChange={(e) => handleChange('descripcion', e.target.value)}
-                className="w-full bg-[#F9FAFB] border-none rounded-2xl py-4 px-6 text-[16px] font-medium text-[#4D5D55] min-h-[100px]"
+                onChangeText={(val) => handleChange('descripcion', val)}
+                style={[styles.textInput, styles.textArea]}
                 placeholder="Describa cualquier observación importante..."
+                placeholderTextColor="#9CA3AF"
               />
-            </div>
-          </div>
-        </div>
+            </View>
+          </View>
+        </View>
 
-        <div className="bg-white rounded-[2.5rem] p-8 shadow-sm">
-          <h3 className="text-[18px] font-black text-center text-[#1A1C1B] mb-6">Fotos del reporte</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="aspect-square bg-[#F9FAFB] rounded-[1.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-[#9CA3AF] gap-2">
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span className="text-[12px] font-bold">Agregar</span>
-            </div>
-            <div className="aspect-square bg-[#F9FAFB] rounded-[1.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-[#9CA3AF] gap-2">
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span className="text-[12px] font-bold">Agregar</span>
-            </div>
-          </div>
-        </div>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Fotos del reporte</Text>
+          <View style={styles.photoGrid}>
+            <TouchableOpacity style={styles.addPhotoBtn}>
+              <Plus color="#9CA3AF" size={32} />
+              <Text style={styles.addPhotoText}>Agregar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.addPhotoBtn}>
+              <Plus color="#9CA3AF" size={32} />
+              <Text style={styles.addPhotoText}>Agregar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onSubmit(formData)}
-          className="w-full bg-[#1A1C1B] text-white py-5 rounded-2xl text-[20px] font-black shadow-xl flex items-center justify-center gap-3"
+        <TouchableOpacity 
+          onPress={() => onSubmit(formData)}
+          style={styles.submitBtn}
         >
-          Enviar reporte <span className="text-2xl font-light opacity-80">&gt;</span>
-        </motion.button>
-      </main>
-    </div>
+          <Text style={styles.submitBtnText}>Enviar reporte</Text>
+          <ChevronRight color="rgba(255,255,255,0.8)" size={24} />
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7F6',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    paddingBottom: 16,
+    gap: 20,
+  },
+  backBtn: {
+    width: 48,
+    height: 48,
+    backgroundColor: '#1A1C1B',
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1A1C1B',
+  },
+  stepInfo: {
+    paddingHorizontal: 24,
+    marginBottom: 24,
+  },
+  stepTextWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 8,
+  },
+  stepText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1A1C1B',
+  },
+  progressBarWrapper: {
+    flex: 1,
+    height: 6,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#8BB29E',
+    borderRadius: 3,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 120,
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 40,
+    padding: 32,
+    marginBottom: 24,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  cropName: {
+    fontSize: 28,
+    fontWeight: '900',
+    textAlign: 'center',
+    color: '#1A1C1B',
+    marginBottom: 24,
+  },
+  summarySection: {
+    marginBottom: 24,
+    gap: 12,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    paddingBottom: 8,
+  },
+  summaryLabel: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  summaryValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#4D5D55',
+  },
+  formSection: {
+    gap: 24,
+  },
+  fieldsContainer: {
+    gap: 24,
+  },
+  inputGroup: {
+    gap: 8,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  textInput: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 16,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#4D5D55',
+  },
+  textArea: {
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  dateInputWrapper: {
+    position: 'relative',
+  },
+  calendarIcon: {
+    position: 'absolute',
+    right: 24,
+    top: 16,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  pickerContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  pickerOption: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  pickerOptionSelected: {
+    backgroundColor: '#1A1C1B',
+    borderColor: '#1A1C1B',
+  },
+  pickerOptionText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#4D5D55',
+  },
+  pickerOptionTextSelected: {
+    color: 'white',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    textAlign: 'center',
+    color: '#1A1C1B',
+    marginBottom: 24,
+  },
+  photoGrid: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  addPhotoBtn: {
+    flex: 1,
+    aspectRatio: 1,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 24,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  addPhotoText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#9CA3AF',
+  },
+  submitBtn: {
+    backgroundColor: '#1A1C1B',
+    paddingVertical: 20,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  submitBtnText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '900',
+  },
+});
 
 export default ReportFormView;
 

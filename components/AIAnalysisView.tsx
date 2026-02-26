@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { ChevronLeft, Monitor } from 'lucide-react-native';
 
 interface AIAnalysisViewProps {
   onBack: () => void;
@@ -8,41 +9,143 @@ interface AIAnalysisViewProps {
 
 const AIAnalysisView: React.FC<AIAnalysisViewProps> = ({ onBack }) => {
   return (
-    <div className="flex flex-col h-full bg-[#F5F7F6] overflow-y-auto no-scrollbar pb-32">
-      <header className="px-6 pt-10 pb-6 flex items-center gap-5">
-        <button onClick={onBack} className="w-12 h-12 bg-[#1A1C1B] rounded-full flex items-center justify-center text-white shadow-md active:scale-90 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <h1 className="text-[24px] font-black tracking-tight">Analisis de la IA</h1>
-      </header>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+          <ChevronLeft color="white" size={24} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Analisis de la IA</Text>
+      </View>
 
-      <main className="px-6 space-y-6">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-[#4D5D55] rounded-2xl flex items-center justify-center text-white shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <div className="bg-[#DDE4E1] px-6 py-2 rounded-full text-[16px] font-black text-[#1A1C1B]">
-            Mi analisis basado en tu cultivo
-          </div>
-        </div>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.aiHeader}>
+          <View style={styles.aiIconWrapper}>
+            <Monitor color="white" size={40} />
+          </View>
+          <View style={styles.aiBadge}>
+            <Text style={styles.aiBadgeText}>Mi analisis basado en tu cultivo</Text>
+          </View>
+        </View>
 
-        <div className="bg-white rounded-[2.5rem] p-8 min-h-[400px] shadow-sm border border-gray-100">
-          <div className="space-y-6">
-            <div className="h-4 bg-gray-100 rounded-full w-3/4"></div>
-            <div className="h-4 bg-gray-100 rounded-full w-full"></div>
-            <div className="h-4 bg-gray-100 rounded-full w-5/6"></div>
-            <div className="h-4 bg-gray-100 rounded-full w-2/3"></div>
-            <div className="h-4 bg-gray-100 rounded-full w-full"></div>
-            <div className="h-4 bg-gray-100 rounded-full w-4/5"></div>
-          </div>
-        </div>
-      </main>
-    </div>
+        <View style={styles.card}>
+          <View style={styles.skeletonContainer}>
+            <View style={[styles.skeletonLine, { width: '75%' }]} />
+            <View style={[styles.skeletonLine, { width: '100%' }]} />
+            <View style={[styles.skeletonLine, { width: '83%' }]} />
+            <View style={[styles.skeletonLine, { width: '66%' }]} />
+            <View style={[styles.skeletonLine, { width: '100%' }]} />
+            <View style={[styles.skeletonLine, { width: '80%' }]} />
+          </View>
+          <Text style={styles.placeholderText}>
+            El análisis de IA se está procesando. Pronto verás recomendaciones detalladas sobre el estado de salud y crecimiento de tu cultivo.
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7F6',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    paddingBottom: 24,
+    gap: 20,
+  },
+  backBtn: {
+    width: 48,
+    height: 48,
+    backgroundColor: '#1A1C1B',
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 100,
+  },
+  aiHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 24,
+  },
+  aiIconWrapper: {
+    width: 64,
+    height: 64,
+    backgroundColor: '#4D5D55',
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  aiBadge: {
+    backgroundColor: '#DDE4E1',
+    paddingHorizontal: 24,
+    paddingVertical: 8,
+    borderRadius: 24,
+  },
+  aiBadgeText: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 40,
+    padding: 32,
+    minHeight: 400,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  skeletonContainer: {
+    gap: 24,
+    marginBottom: 32,
+  },
+  skeletonLine: {
+    height: 16,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+  },
+  placeholderText: {
+    fontSize: 16,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    fontWeight: '500',
+    lineHeight: 24,
+  },
+});
 
 export default AIAnalysisView;

@@ -1,6 +1,9 @@
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
+import { ArrowRight } from 'lucide-react-native';
+
+const { width, height } = Dimensions.get('window');
 
 interface SplashViewProps {
   onContinue: () => void;
@@ -8,42 +11,105 @@ interface SplashViewProps {
 
 const SplashView: React.FC<SplashViewProps> = ({ onContinue }) => {
   return (
-    <div className="flex flex-col h-full bg-[#F5F7F6] relative overflow-hidden">
+    <SafeAreaView style={styles.container}>
       {/* Background Pattern */}
-      <div className="absolute top-0 left-0 w-full h-1/2 bg-[#4D5D55] rounded-b-[4rem] overflow-hidden">
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 86c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm66-3c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-40-39c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm29 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM32 5c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM54 96c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM66 30c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM4 49c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm88 37c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM80 63c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM16 20c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm20 0c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm20 0c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm20 0c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
-          backgroundSize: '200px 200px'
-        }}></div>
-      </div>
+      <View style={styles.backgroundHeader}>
+        <View style={styles.patternOverlay} />
+      </View>
 
-      <div className="flex-grow flex flex-col justify-end px-10 pb-20 z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 className="text-[56px] font-black text-[#1A1C1B] leading-none mb-4">AgroSoft</h1>
-          <p className="text-[20px] text-[#4D5D55] font-medium leading-tight opacity-80 mb-12">
+      <View style={styles.content}>
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>AgroSoft</Text>
+          <Text style={styles.subtitle}>
             Seguimiento de cultivos inteligentes en tus manos
-          </p>
-        </motion.div>
+          </Text>
+        </View>
 
-        <div className="flex justify-end items-center gap-4">
-          <span className="text-[18px] font-bold text-[#4D5D55]">Continuar</span>
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={onContinue}
-            className="w-16 h-16 bg-[#1A1C1B] rounded-full flex items-center justify-center text-white shadow-xl"
+        <View style={styles.footer}>
+          <Text style={styles.continueText}>Continuar</Text>
+          <TouchableOpacity 
+            activeOpacity={0.8}
+            onPress={onContinue}
+            style={styles.button}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </motion.button>
-        </div>
-      </div>
-    </div>
+            <ArrowRight color="white" size={32} strokeWidth={2.5} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7F6',
+  },
+  backgroundHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: height * 0.5,
+    backgroundColor: '#4D5D55',
+    borderBottomLeftRadius: 64,
+    borderBottomRightRadius: 64,
+    overflow: 'hidden',
+  },
+  patternOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.2,
+    // Note: SVG background patterns are harder in pure RN without extra libs
+    // but for the web preview it will just be a solid color or we could use an Image
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingHorizontal: 40,
+    paddingBottom: 80,
+    zIndex: 10,
+  },
+  textContainer: {
+    marginBottom: 48,
+  },
+  title: {
+    fontSize: 56,
+    fontWeight: '900',
+    color: '#1A1C1B',
+    lineHeight: 64,
+    marginBottom: 16,
+  },
+  subtitle: {
+    fontSize: 20,
+    color: '#4D5D55',
+    fontWeight: '500',
+    lineHeight: 24,
+    opacity: 0.8,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  continueText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#4D5D55',
+    marginRight: 16,
+  },
+  button: {
+    width: 64,
+    height: 64,
+    backgroundColor: '#1A1C1B',
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+});
 
 export default SplashView;

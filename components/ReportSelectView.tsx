@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { ChevronLeft, Sprout, ChevronRight } from 'lucide-react-native';
 import { EventType } from '../types';
 
 interface ReportSelectViewProps {
@@ -18,58 +19,188 @@ const ReportSelectView: React.FC<ReportSelectViewProps> = ({ onBack, onSelectTyp
   ];
 
   return (
-    <div className="flex flex-col h-full bg-[#F5F7F6]">
-      <header className="px-6 pt-10 pb-4 flex items-center gap-5">
-        <button onClick={onBack} className="w-12 h-12 bg-[#1A1C1B] rounded-full flex items-center justify-center text-white shadow-md active:scale-90 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <h1 className="text-[22px] font-bold tracking-tight">Crear cultivo</h1>
-      </header>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+          <ChevronLeft color="white" size={24} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Crear cultivo</Text>
+      </View>
 
-      <div className="px-6 mb-6">
-        <div className="flex items-center gap-4 mb-2">
-          <span className="text-[15px] font-bold text-[#1A1C1B]">Paso 1 de 2</span>
-          <div className="flex-grow h-1.5 bg-gray-200 rounded-full overflow-hidden">
-            <div className="w-1/2 h-full bg-[#8BB29E] rounded-full"></div>
-          </div>
-        </div>
-      </div>
+      <View style={styles.stepInfo}>
+        <View style={styles.stepTextWrapper}>
+          <Text style={styles.stepText}>Paso 1 de 2</Text>
+          <View style={styles.progressBarWrapper}>
+            <View style={styles.progressBar} />
+          </View>
+        </View>
+      </View>
 
-      <main className="flex-grow px-6 pb-24">
-        <div className="bg-white rounded-[2.5rem] p-8 shadow-sm h-full flex flex-col">
-          <h2 className="text-[22px] font-black text-center mb-8">¿Que tipo de reporte realizaras?</h2>
+      <View style={styles.main}>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>¿Que tipo de reporte realizaras?</Text>
           
-          <div className="grid grid-cols-2 gap-4 mb-10">
+          <View style={styles.grid}>
             {reportTypes.map((item) => (
-              <motion.button
+              <TouchableOpacity
                 key={item.type}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => onSelectType(item.type)}
-                className="bg-[#EAF1EE] rounded-[1.5rem] p-6 flex flex-col items-center gap-3 shadow-sm"
+                onPress={() => onSelectType(item.type)}
+                style={styles.gridItem}
               >
-                <div className="w-16 h-16 bg-white rounded-[1rem] flex items-center justify-center text-[#4D5D55]">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C12 2 12 6 8 6C8 6 4 6 4 2C4 2 4 10 12 10V22H14V10C22 10 22 2 22 2C22 2 18 6 14 6C14 6 12 6 12 2Z" />
-                  </svg>
-                </div>
-                <span className="text-[16px] font-black text-[#1A1C1B]">{item.label}</span>
-              </motion.button>
+                <View style={styles.iconWrapper}>
+                  <Sprout color="#4D5D55" size={40} />
+                </View>
+                <Text style={styles.itemLabel}>{item.label}</Text>
+              </TouchableOpacity>
             ))}
-          </div>
+          </View>
 
-          <div className="mt-auto">
-            <button 
-              className="w-full bg-[#1A1C1B] text-white py-[20px] rounded-2xl flex items-center justify-center gap-3 text-[19px] font-black shadow-xl opacity-50 cursor-not-allowed"
+          <View style={styles.footer}>
+            <TouchableOpacity 
+              disabled
+              style={[styles.continueBtn, { opacity: 0.5 }]}
             >
-              Continuar <span className="text-2xl font-light opacity-80">&gt;</span>
-            </button>
-          </div>
-        </div>
-      </main>
-    </div>
+              <Text style={styles.continueBtnText}>Continuar</Text>
+              <ChevronRight color="rgba(255,255,255,0.8)" size={24} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7F6',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    paddingBottom: 16,
+    gap: 20,
+  },
+  backBtn: {
+    width: 48,
+    height: 48,
+    backgroundColor: '#1A1C1B',
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1A1C1B',
+  },
+  stepInfo: {
+    paddingHorizontal: 24,
+    marginBottom: 24,
+  },
+  stepTextWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 8,
+  },
+  stepText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1A1C1B',
+  },
+  progressBarWrapper: {
+    flex: 1,
+    height: 6,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    width: '50%',
+    height: '100%',
+    backgroundColor: '#8BB29E',
+    borderRadius: 3,
+  },
+  main: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+  },
+  card: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 40,
+    padding: 32,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+  },
+  cardTitle: {
+    fontSize: 22,
+    fontWeight: '900',
+    textAlign: 'center',
+    color: '#1A1C1B',
+    marginBottom: 32,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+    justifyContent: 'space-between',
+  },
+  gridItem: {
+    width: '47%',
+    backgroundColor: '#EAF1EE',
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
+    gap: 12,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+  },
+  iconWrapper: {
+    width: 64,
+    height: 64,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemLabel: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  footer: {
+    marginTop: 'auto',
+  },
+  continueBtn: {
+    backgroundColor: '#1A1C1B',
+    paddingVertical: 20,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  continueBtnText: {
+    color: 'white',
+    fontSize: 19,
+    fontWeight: '900',
+  },
+});
 
 export default ReportSelectView;

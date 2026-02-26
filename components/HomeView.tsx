@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { Home, Bell, Sprout, History, Plus, List } from 'lucide-react-native';
 import { CropItem } from '../types';
 
 interface HomeViewProps {
@@ -21,97 +22,360 @@ const HomeView: React.FC<HomeViewProps> = ({
   onViewHistory 
 }) => {
   return (
-    <div className="flex flex-col h-full bg-[#F5F7F6] overflow-y-auto no-scrollbar pb-32">
-      {/* Header */}
-      <header className="px-6 pt-10 pb-6 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#1A1C1B]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-          </div>
-          <h1 className="text-[24px] font-black text-[#1A1C1B]">Inicio</h1>
-        </div>
-        <div className="relative">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#1A1C1B]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
-          </svg>
-          <div className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-[#F5F7F6]"></div>
-        </div>
-      </header>
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <View style={styles.iconCircle}>
+              <Home color="#1A1C1B" size={24} />
+            </View>
+            <Text style={styles.headerTitle}>Inicio</Text>
+          </View>
+          <TouchableOpacity style={styles.notificationBtn}>
+            <Bell color="#1A1C1B" size={32} />
+            <View style={styles.notificationBadge} />
+          </TouchableOpacity>
+        </View>
 
-      {/* Active Crops Summary */}
-      <div className="px-6 mb-8">
-        <div className="bg-[#DDE4E1] p-6 rounded-[2.5rem] flex items-center gap-6">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-[32px] font-black text-[#1A1C1B] shadow-sm">
-            {activeCropsCount}
-          </div>
-          <span className="text-[22px] font-black text-[#1A1C1B]">Cultivos activos</span>
-        </div>
-      </div>
+        {/* Active Crops Summary */}
+        <View style={styles.summaryCard}>
+          <View style={styles.summaryBadge}>
+            <Text style={styles.summaryCount}>{activeCropsCount}</Text>
+          </View>
+          <Text style={styles.summaryText}>Cultivos activos</Text>
+        </View>
 
-      {/* Featured Crop Section */}
-      <div className="px-6 mb-8">
-        <h2 className="text-[22px] font-black text-[#1A1C1B] mb-4">Tus cultivos</h2>
-        <div className="flex gap-4 overflow-x-auto no-scrollbar">
-          <motion.div 
-            whileTap={{ scale: 0.98 }}
-            onClick={() => onViewCrop(featuredCrop)}
-            className="bg-white rounded-[2.5rem] p-8 min-w-[280px] shadow-sm flex flex-col items-center"
+        {/* Featured Crop Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Tus cultivos</Text>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalScroll}
           >
-            <h3 className="text-[28px] font-black text-[#1A1C1B] mb-4">{featuredCrop.name}</h3>
-            <div className="w-24 h-24 bg-[#DDE4E1] rounded-[1.5rem] flex items-center justify-center mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-14 w-14 text-[#4D5D55]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C12 2 12 6 8 6C8 6 4 6 4 2C4 2 4 10 12 10V22H14V10C22 10 22 2 22 2C22 2 18 6 14 6C14 6 12 6 12 2Z" />
-                <path d="M6 19H18V21C18 22.1 17.1 23 16 23H8C6.9 23 6 22.1 6 21V19Z" opacity="0.8" />
-              </svg>
-            </div>
-            <span className="text-[18px] font-bold text-[#4D5D55] mb-4">365 Dias</span>
-            <div className="flex items-center gap-4 w-full">
-              <span className="text-[18px] font-black text-[#1A1C1B]">Etapa</span>
-              <div className="bg-[#DDE4E1] px-6 py-2 rounded-full text-[16px] font-black text-[#1A1C1B]">
-                {featuredCrop.phase}
-              </div>
-            </div>
-          </motion.div>
-          {/* Placeholder for next crop */}
-          <div className="bg-white/50 rounded-[2.5rem] p-8 min-w-[100px] border-2 border-dashed border-gray-200"></div>
-        </div>
-      </div>
+            <TouchableOpacity 
+              activeOpacity={0.9}
+              onPress={() => onViewCrop(featuredCrop)}
+              style={styles.featuredCard}
+            >
+              <Text style={styles.cropName}>{featuredCrop.name}</Text>
+              <View style={styles.cropIconWrapper}>
+                <Sprout color="#4D5D55" size={56} />
+              </View>
+              <Text style={styles.cropDays}>365 Dias</Text>
+              <View style={styles.phaseWrapper}>
+                <Text style={styles.phaseLabel}>Etapa</Text>
+                <View style={styles.phaseBadge}>
+                  <Text style={styles.phaseText}>{featuredCrop.phase}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+            
+            <View style={styles.placeholderCard} />
+          </ScrollView>
+        </View>
 
-      {/* Quick Actions */}
-      <div className="px-6 mb-8">
-        <h2 className="text-[22px] font-black text-[#1A1C1B] mb-4 text-center">Que deseas hacer?</h2>
-        <div className="flex justify-center gap-3">
-          <button onClick={onCreateCrop} className="bg-white px-6 py-3 rounded-2xl font-black text-[15px] text-[#1A1C1B] shadow-sm border border-gray-100">Crear cultivo</button>
-          <button onClick={onViewAllCrops} className="bg-white px-6 py-3 rounded-2xl font-black text-[15px] text-[#1A1C1B] shadow-sm border border-gray-100">ver cultivos</button>
-          <button onClick={onViewHistory} className="bg-white px-6 py-3 rounded-2xl font-black text-[15px] text-[#1A1C1B] shadow-sm border border-gray-100">Historial</button>
-        </div>
-      </div>
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <Text style={styles.actionTitle}>Que deseas hacer?</Text>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity onPress={onCreateCrop} style={styles.actionBtn}>
+              <Text style={styles.actionBtnText}>Crear cultivo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onViewAllCrops} style={styles.actionBtn}>
+              <Text style={styles.actionBtnText}>ver cultivos</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onViewHistory} style={styles.actionBtn}>
+              <Text style={styles.actionBtnText}>Historial</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      {/* Risk Alert Section */}
-      <div className="px-6">
-        <div className="bg-white rounded-[2.5rem] p-8 shadow-sm flex items-center gap-6">
-          <div className="w-20 h-20 bg-[#DDE4E1] rounded-[1.5rem] flex flex-col items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#4D5D55]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C12 2 12 6 8 6C8 6 4 6 4 2C4 2 4 10 12 10V22H14V10C22 10 22 2 22 2C22 2 18 6 14 6C14 6 12 6 12 2Z" />
-            </svg>
-            <span className="text-[12px] font-black text-[#1A1C1B]">Lechuga</span>
-          </div>
-          <div className="flex-grow">
-            <h3 className="text-[20px] font-black text-[#1A1C1B] mb-1">Cultivo en riesgo</h3>
-            <div className="flex items-center gap-2 text-[#4D5D55] mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <span className="text-[14px] font-bold">Tu cultivo carece de riego</span>
-            </div>
-            <button className="bg-[#DDE4E1] px-6 py-2 rounded-full text-[14px] font-black text-[#1A1C1B]">Ver cultivo</button>
-          </div>
-        </div>
-      </div>
-    </div>
+        {/* Risk Alert Section */}
+        <View style={styles.alertCard}>
+          <View style={styles.alertIconWrapper}>
+            <Sprout color="#4D5D55" size={40} />
+            <Text style={styles.alertCropType}>Lechuga</Text>
+          </View>
+          <View style={styles.alertContent}>
+            <Text style={styles.alertTitle}>Cultivo en riesgo</Text>
+            <View style={styles.alertSubtitleWrapper}>
+              <Bell color="#4D5D55" size={16} />
+              <Text style={styles.alertSubtitle}>Tu cultivo carece de riego</Text>
+            </View>
+            <TouchableOpacity style={styles.alertBtn}>
+              <Text style={styles.alertBtnText}>Ver cultivo</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7F6',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 120,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    paddingBottom: 24,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconCircle: {
+    width: 48,
+    height: 48,
+    backgroundColor: 'white',
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    marginRight: 16,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  notificationBtn: {
+    position: 'relative',
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 12,
+    height: 12,
+    backgroundColor: '#EF4444',
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#F5F7F6',
+  },
+  summaryCard: {
+    backgroundColor: '#DDE4E1',
+    marginHorizontal: 24,
+    padding: 24,
+    borderRadius: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  summaryBadge: {
+    width: 64,
+    height: 64,
+    backgroundColor: 'white',
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    marginRight: 24,
+  },
+  summaryCount: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  summaryText: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  section: {
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#1A1C1B',
+    paddingHorizontal: 24,
+    marginBottom: 16,
+  },
+  horizontalScroll: {
+    paddingHorizontal: 24,
+  },
+  featuredCard: {
+    backgroundColor: 'white',
+    borderRadius: 40,
+    padding: 32,
+    minWidth: 280,
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    marginRight: 16,
+  },
+  cropName: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#1A1C1B',
+    marginBottom: 16,
+  },
+  cropIconWrapper: {
+    width: 96,
+    height: 96,
+    backgroundColor: '#DDE4E1',
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  cropDays: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#4D5D55',
+    marginBottom: 16,
+  },
+  phaseWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+  },
+  phaseLabel: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#1A1C1B',
+    marginRight: 16,
+  },
+  phaseBadge: {
+    backgroundColor: '#DDE4E1',
+    paddingHorizontal: 24,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  phaseText: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  placeholderCard: {
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 40,
+    width: 100,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: '#E5E7EB',
+  },
+  actionTitle: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#1A1C1B',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 12,
+    paddingHorizontal: 24,
+  },
+  actionBtn: {
+    backgroundColor: 'white',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  actionBtnText: {
+    fontSize: 15,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+  alertCard: {
+    backgroundColor: 'white',
+    marginHorizontal: 24,
+    padding: 32,
+    borderRadius: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  alertIconWrapper: {
+    width: 80,
+    height: 80,
+    backgroundColor: '#DDE4E1',
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 24,
+  },
+  alertCropType: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#1A1C1B',
+    marginTop: 4,
+  },
+  alertContent: {
+    flex: 1,
+  },
+  alertTitle: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#1A1C1B',
+    marginBottom: 4,
+  },
+  alertSubtitleWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  alertSubtitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#4D5D55',
+    marginLeft: 8,
+  },
+  alertBtn: {
+    backgroundColor: '#DDE4E1',
+    paddingHorizontal: 24,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+  },
+  alertBtnText: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#1A1C1B',
+  },
+});
 
 export default HomeView;
